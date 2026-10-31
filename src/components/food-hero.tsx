@@ -4,6 +4,7 @@ import chickenRound from "@/assets/chicken-cutout-1.png";
 import chickenLong from "@/assets/chicken-cutout-2.png";
 import chickenAngular from "@/assets/chicken-cutout-3.png";
 import chickenOblong from "@/assets/chicken-cutout-4.png";
+import crispyChicken from "@/assets/crispy-chicken-piece.png";
 import friesCurved from "@/assets/fries-cutout-1.png";
 import friesShort from "@/assets/fries-cutout-2.png";
 import friesTapered from "@/assets/fries-cutout-3.png";
@@ -21,6 +22,11 @@ const floatingFood = [
   { src: friesBent, position: "food-piece-7", rotation: "14deg", delay: "-6.2s", duration: "10.3s", lift: "-28px", sway: "5px", speed: 0.28, ease: 0.065, drift: 0.025, spin: -0.018 },
   { src: chickenOblong, position: "food-piece-8", rotation: "-45deg", delay: "-3.9s", duration: "8.8s", lift: "-13px", sway: "-12px", speed: 0.14, ease: 0.085, drift: -0.02, spin: 0.034 },
   { src: friesNarrow, position: "food-piece-9", rotation: "30deg", delay: "-2.6s", duration: "7.1s", lift: "-20px", sway: "7px", speed: 0.24, ease: 0.05, drift: 0.03, spin: -0.025 },
+  { src: friesShort, position: "food-piece-10", rotation: "-18deg", delay: "-3.6s", duration: "7.8s", lift: "-18px", sway: "9px", speed: 0.21, ease: 0.06, drift: 0.028, spin: 0.018 },
+  { src: friesBent, position: "food-piece-11", rotation: "42deg", delay: "-1.9s", duration: "8.6s", lift: "-22px", sway: "-7px", speed: 0.23, ease: 0.08, drift: -0.032, spin: -0.02 },
+  { src: crispyChicken, position: "food-piece-12", rotation: "15deg", delay: "-4.1s", duration: "9.2s", lift: "-15px", sway: "-9px", speed: 0.15, ease: 0.07, drift: 0.025, spin: 0.016 },
+  { src: chickenRound, position: "food-piece-13", rotation: "-35deg", delay: "-2.8s", duration: "6.9s", lift: "-17px", sway: "8px", speed: 0.18, ease: 0.095, drift: -0.022, spin: -0.024 },
+  { src: friesCurved, position: "food-piece-14", rotation: "-15deg", delay: "-5.3s", duration: "8.5s", lift: "-24px", sway: "10px", speed: 0.25, ease: 0.06, drift: 0.03, spin: 0.022 },
   { src: friesGolden, position: "food-foreground food-foreground-1", rotation: "-32deg", delay: "-4.8s", duration: "9.1s", lift: "-16px", sway: "7px", speed: 0.2, ease: 0.07, drift: -0.02, spin: 0.014 },
   { src: chickenRound, position: "food-foreground food-foreground-2", rotation: "22deg", delay: "-2.4s", duration: "8.4s", lift: "-12px", sway: "-6px", speed: 0.16, ease: 0.08, drift: 0.02, spin: -0.018 },
   { src: friesTapered, position: "food-foreground food-foreground-3", rotation: "-12deg", delay: "-5.1s", duration: "10.1s", lift: "-18px", sway: "5px", speed: 0.25, ease: 0.06, drift: 0.015, spin: 0.02 },
@@ -167,6 +173,69 @@ export function FoodHero({ children }: { children: React.ReactNode }) {
       window.removeEventListener("scroll", update);
       window.removeEventListener("resize", resize);
       reducedMotion.removeEventListener("change", update);
+    };
+  }, []);
+
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    if (reducedMotion.matches) {
+      section.style.setProperty("--intro-bowl-y", "0px");
+      section.style.setProperty("--intro-piece-y", "0px");
+      return;
+    }
+
+    // Initial offsets: Bowl sits low (+380px down), floating pieces hover up (-360px above)
+    const startBowlY = 380;
+    const startPieceY = -360;
+    section.style.setProperty("--intro-bowl-y", `${startBowlY}px`);
+    section.style.setProperty("--intro-piece-y", `${startPieceY}px`);
+
+    let animFrame = 0;
+
+    const startAnimation = () => {
+      // Delay slightly (120ms) so preloader curtain panels finish their initial burst before bowl begins rising
+      setTimeout(() => {
+        let startTime = 0;
+        const duration = 1600; // 1.6s smooth entrance
+
+        // Smooth ease-out cubic
+        const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
+
+        const step = (now: number) => {
+          if (!startTime) startTime = now;
+          const elapsed = now - startTime;
+          const progress = Math.min(1, elapsed / duration);
+          const eased = easeOutCubic(progress);
+
+          const currentBowlY = startBowlY * (1 - eased);
+          const currentPieceY = startPieceY * (1 - eased);
+
+          section.style.setProperty("--intro-bowl-y", `${currentBowlY.toFixed(2)}px`);
+          section.style.setProperty("--intro-piece-y", `${currentPieceY.toFixed(2)}px`);
+
+          if (progress < 1) {
+            animFrame = window.requestAnimationFrame(step);
+          } else {
+            section.style.setProperty("--intro-bowl-y", "0px");
+            section.style.setProperty("--intro-piece-y", "0px");
+          }
+        };
+
+        animFrame = window.requestAnimationFrame(step);
+      }, 120);
+    };
+
+    // Trigger on preloader curtain exit, or fallback if preloader already exited/skipped
+    window.addEventListener("preloader:exit", startAnimation, { once: true });
+    const fallbackTimer = window.setTimeout(startAnimation, 2400);
+
+    return () => {
+      window.removeEventListener("preloader:exit", startAnimation);
+      window.clearTimeout(fallbackTimer);
+      window.cancelAnimationFrame(animFrame);
     };
   }, []);
 

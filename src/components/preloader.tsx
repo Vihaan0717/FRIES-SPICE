@@ -58,6 +58,7 @@ export function Preloader() {
         // Trigger curtain exit
         setTimeout(() => {
           setIsExiting(true);
+          window.dispatchEvent(new CustomEvent("preloader:exit"));
         }, 150);
 
         // Remove from DOM after curtain panels complete their staggered slide

@@ -172,12 +172,18 @@
   top: 30%;
   left: 50%;
   width: min(56%, 600px);
-  transform: translate(-50%, var(--scroll-y, 0px)) rotate(var(--scroll-rotation, 0deg));
+  transform: translate3d(-50%, calc(var(--intro-bowl-y, 0px) + var(--scroll-y, 0px)), 0) rotate(var(--scroll-rotation, 0deg));
   will-change: transform;
+  contain: layout paint;
 }
 .food-piece {
-  transform: translate(calc(var(--scroll-x, 0px) + var(--cursor-x, 0px)), calc(var(--scroll-y, 0px) + var(--cursor-y, 0px))) rotate(var(--scroll-rotation, 0deg));
+  transform: translate3d(
+    calc(var(--scroll-x, 0px) + var(--cursor-x, 0px)),
+    calc(var(--intro-piece-y, 0px) + var(--scroll-y, 0px) + var(--cursor-y, 0px)),
+    0
+  ) rotate(var(--scroll-rotation, 0deg));
   will-change: transform;
+  contain: layout paint;
 }
 .food-piece-image {
   animation: food-drift var(--float-duration, 7s) ease-in-out infinite;
@@ -187,19 +193,24 @@
   38% { transform: translate(var(--float-sway, 6px), var(--float-lift, -18px)) rotate(calc(var(--r, 0deg) + 6deg)); }
   72% { transform: translate(calc(var(--float-sway, 6px) * -0.5), calc(var(--float-lift, -18px) * 0.35)) rotate(calc(var(--r, 0deg) - 4deg)); }
 }
-.food-piece-1 { left: 4%; top: 22%; width: 84px; }
-.food-piece-2 { left: 14%; top: 38%; width: 138px; }
-.food-piece-3 { left: 4%; top: 60%; width: 125px; }
-.food-piece-4 { left: 19%; top: 79%; width: 62px; }
-.food-piece-5 { right: 24%; top: 12%; width: 130px; }
-.food-piece-6 { right: 4%; top: 30%; width: 94px; }
-.food-piece-7 { right: 13%; top: 52%; width: 104px; }
-.food-piece-8 { right: 5%; top: 77%; width: 105px; }
-.food-piece-9 { left: 29%; top: 84%; width: 114px; }
+.food-piece-1 { left: 4%; top: 20%; width: 105px; }
+.food-piece-2 { left: 13%; top: 36%; width: 175px; }
+.food-piece-3 { left: 3%; top: 58%; width: 160px; }
+.food-piece-4 { left: 18%; top: 78%; width: 85px; }
+.food-piece-5 { right: 22%; top: 10%; width: 165px; }
+.food-piece-6 { right: 4%; top: 28%; width: 120px; }
+.food-piece-7 { right: 12%; top: 50%; width: 140px; }
+.food-piece-8 { right: 4%; top: 74%; width: 135px; }
+.food-piece-9 { left: 28%; top: 83%; width: 155px; }
+.food-piece-10 { left: 7%; top: 40%; width: 150px; }
+.food-piece-11 { right: 26%; top: 80%; width: 160px; }
+.food-piece-12 { right: 10%; top: 20%; width: 110px; }
+.food-piece-13 { left: 12%; top: 70%; width: 95px; }
+.food-piece-14 { right: 18%; top: 66%; width: 100px; }
 .food-foreground { z-index: 35; }
-.food-foreground-1 { left: -7%; top: 36%; width: 250px; filter: blur(4px); }
-.food-foreground-2 { right: -8%; top: 66%; width: 225px; filter: blur(5px); }
-.food-foreground-3 { right: 20%; top: 84%; width: 200px; filter: blur(3px); }
+.food-foreground-1 { left: -7%; top: 36%; width: 290px; }
+.food-foreground-2 { right: -8%; top: 66%; width: 260px; }
+.food-foreground-3 { right: 20%; top: 84%; width: 235px; }
 
 @media (min-width: 1280px) {
   .food-headline { font-size: 120px; }
@@ -211,17 +222,22 @@
   .food-hero { height: 100vh; height: 100dvh; min-height: 100vh; min-height: 100dvh; padding-top: 110px; }
   .food-headline { font-size: 48px; }
   .food-bowl { top: 36%; width: 88%; }
-  .food-piece-1 { left: 3%; top: 36%; width: 48px; }
-  .food-piece-2 { left: 1%; top: 59%; width: 80px; }
-  .food-piece-3 { left: 6%; top: 79%; width: 75px; }
-  .food-piece-4 { left: 28%; top: 75%; width: 42px; }
-  .food-piece-5 { right: 9%; top: 11%; width: 68px; }
-  .food-piece-6 { right: 2%; top: 36%; width: 48px; }
-  .food-piece-7 { right: 0%; top: 61%; width: 78px; }
-  .food-piece-8 { right: 7%; top: 80%; width: 62px; }
+  .food-piece-1 { left: 3%; top: 36%; width: 60px; }
+  .food-piece-2 { left: 1%; top: 59%; width: 100px; }
+  .food-piece-3 { left: 6%; top: 79%; width: 95px; }
+  .food-piece-4 { left: 28%; top: 75%; width: 55px; }
+  .food-piece-5 { right: 9%; top: 11%; width: 88px; }
+  .food-piece-6 { right: 2%; top: 36%; width: 62px; }
+  .food-piece-7 { right: 0%; top: 61%; width: 98px; }
+  .food-piece-8 { right: 7%; top: 80%; width: 78px; }
   .food-piece-9 { display: none; }
-  .food-foreground-1 { left: -23%; top: 42%; width: 165px; filter: blur(3px); }
-  .food-foreground-2 { right: -22%; top: 76%; width: 145px; filter: blur(4px); }
+  .food-piece-10 { display: none; }
+  .food-piece-11 { display: none; }
+  .food-piece-12 { display: none; }
+  .food-piece-13 { display: none; }
+  .food-piece-14 { display: none; }
+  .food-foreground-1 { left: -23%; top: 42%; width: 195px; }
+  .food-foreground-2 { right: -22%; top: 76%; width: 175px; }
   .food-foreground-3 { display: none; }
 }
 @media (max-width: 359px) {
